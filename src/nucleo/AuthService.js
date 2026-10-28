@@ -29,7 +29,10 @@ function verifySignature(envelope, secret) {
         return false;
     }
 
-    const payloadStr = JSON.stringify(payload);
+    // In a real implementation we should sign the raw string from the HTTP request to avoid
+    // object key ordering issues. Since this is a PoC parsing the JSON first, we serialize it.
+    // For production, the caller should pass raw payload string to ensure consistent HMAC.
+    const payloadStr = typeof payload === 'string' ? payload : JSON.stringify(payload);
 
     const canonicalString = `${clientId}|${keyId}|${requestId}|${timestamp}|${nonce}|${action}|${identity}|${payloadStr}`;
 
